@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent } from "react";
 import Home from "../../pages/Home";
 import "./Login.css";
-import {Validation} from "./Validation";
+import { Validation } from "./Validation";
 
 interface FormData {
   userData: {
@@ -53,13 +53,27 @@ class Login extends React.Component<{}, State> {
       },
     }));
   };
-
   onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    Validation(this.state.formData)
-  };
 
-  
+    const valid = Validation(this.state.formData);
+
+    if (valid.errors.email === "" && valid.errors.password === "") {
+      // Log success
+      console.log("Form is valid. Perform login logic.");
+    } else {
+      this.setState((prevState) => ({
+        authError: "Form submission failed. Please check the errors below.",
+        formData: {
+          ...prevState.formData,
+          errors: {
+            ...prevState.formData.errors,
+            ...valid.errors,
+          },
+        },
+      }));
+    }
+  };
 
   render() {
     const { formData, authError } = this.state;
